@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VibeCalc ⚡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff6ec4, #7873f5);
+      background-size: 400% 400%;
+      animation: gradientShift 18s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .calculator {
+      background: #1f1f1f;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), 0 0 60px #ff6ec4;
+      width: 90%;
+      max-width: 380px;
+      transition: transform 0.3s ease;
+    }
+
+    .calculator:hover {
+      transform: scale(1.03);
+    }
+
+    #display {
+      width: calc(100% - 20px);
+      font-size: 28px;
+      padding: 14px;
+      margin: 12px auto 10px;
+      display: block;
+      border: none;
+      border-radius: 14px;
+      background: #000;
+      color: #00fff7;
+      text-align: right;
+      box-shadow: inset 0 0 12px #00fff7;
+      font-weight: bold;
+    }
+
+    #preview {
+      font-size: 20px;
+      color: #ff6ec4;
+      text-align: right;
+      padding-right: 12px;
+      margin-bottom: 12px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    button {
+      font-size: 1.3em;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #262626;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: #3a3a3a;
+      transform: translateY(-2px);
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.15);
+    }
+
+    .operator {
+      background: #ff6ec4;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .operator:hover {
+      background: #ff88d1;
+    }
+
+    .equals {
+      background: #00fff7;
+      color: #000;
+      font-weight: bold;
+      grid-column: span 2;
+    }
+
+    .equals:hover {
+      background: #0df;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" oninput="updatePreview();" />
+    <div id="preview"></div>
+
+    <div class="buttons">
+      <button class="operator" onclick="clearDisplay()">C</button>
+      <button class="operator" onclick="deleteLast()">⌫</button>
+      <button class="operator" onclick="append('/')">÷</button>
+      <button class="operator" onclick="append('*')">×</button>
+
+      <button class="operator" onclick="append('(')">(</button>
+      <button class="operator" onclick="append(')')">)</button>
+      <button class="operator" onclick="append('{')">{</button>
+      <button class="operator" onclick="append('}')">}</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button class="operator" onclick="append('-')">−</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button class="operator" onclick="append('+')">+</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('.')">.</button>
+
+      <button onclick="append('0')">0</button>
+      <button class="equals" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("keydown", function (event) {
+      const validKeys = "0123456789+-*/.(){}";
+      if (validKeys.includes(event.key)) {
+        append(event.key);
+      } else if (event.key === "Enter") {
+        calculate();
+      } else if (event.key === "Backspace") {
+        deleteLast();
+      }
+      checkEasterEggs();
+    });
+
+    function append(val) {
+      display.value += val;
+      updatePreview();
+    }
+
+    function clearDisplay() {
+      display.value = "";
+      preview.innerHTML = "";
+    }
+
+    function deleteLast() {
+      display.value = display.value.slice(0, -1);
+      updatePreview();
+    }
+
+    function updatePreview() {
+      try {
+        if (display.value.toLowerCase().includes("fact")) {
+          showRandomMathFact();
+        } else {
+          preview.innerHTML = eval(display.value) || "";
+        }
+      } catch {
+        preview.innerHTML = "";
+      }
+    }
+
+    function calculate() {
+      try {
+        display.value = eval(display.value);
+        preview.innerHTML = "";
+      } catch {
+        display.value = "Error";
+        preview.innerHTML = "";
+      }
+    }
+
+    function showRandomMathFact() {
+      const facts = [
+        "The word 'hundred' comes from the old Norse term 'hundrath', meaning 120, not 100.",
+        "In a room of 23 people, there's a 50% chance two share the same birthday.",
+        "Most mathematical symbols weren’t invented until the 16th century.",
+        "'Forty' is the only number spelled in alphabetical order, and 'one' is in descending order.",
+        "From 0 to 1000, 'one thousand' is the only number that contains an 'a'.",
+        "'Four' is the only English number spelled with the same number of letters as itself.",
+        "Every odd number contains an 'e'.",
+        "Markings on animal bones show humans have been doing math since 30,000 BC.",
+        "'Eleven plus two' is an anagram of 'twelve plus one', both equaling 13.",
+        "In France, a pie chart is sometimes called a 'camembert'.",
+        "The division symbol (÷) is called an obelus.",
+        "2 and 5 are the only prime numbers ending in 2 or 5.",
+        "A 'jiffy' is an actual unit of time—1/100th of a second."
+      ];
+      preview.innerHTML = facts[Math.floor(Math.random() * facts.length)];
+    }
+  </script>
+</body>
+</html>
